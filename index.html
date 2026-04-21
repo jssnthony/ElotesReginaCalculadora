@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Punto de Venta - Elotes</title>
+  <style>
+    :root {
+      --bg: #fff8f1;
+      --card: #ffffff;
+      --accent: #c62828;
+      --accent-dark: #8e1d1d;
+      --gold: #ffb300;
+      --text: #2b2b2b;
+      --muted: #6b6b6b;
+      --border: #f0d8c2;
+      --success: #2e7d32;
+      --shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #fff7ed 0%, #fffdf8 100%);
+      color: var(--text);
+    }
+
+    .app {
+      width: min(1200px, 95%);
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #d84315, #ff9800);
+      color: white;
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+    }
+
+    .hero p {
+      margin: 0;
+      opacity: 0.95;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .section-title {
+      margin: 0 0 16px;
+      font-size: 1.4rem;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .product-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      background: #f8e8d8;
+    }
+
+    .product-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .product-body h3 {
+      margin: 0;
+      font-size: 1.08rem;
+      color: var(--accent-dark);
+    }
+
+    .product-body p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      min-height: 54px;
+    }
+
+    .price-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .price-badge {
+      background: #fff3e0;
+      color: #8d4b00;
+      border: 1px solid #ffd59a;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.84rem;
+      font-weight: bold;
+    }
+
+    .product-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .product-actions button,
+    .sidebar button {
+      border: none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .product-actions button:hover,
+    .sidebar button:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .btn-add {
+      background: var(--accent);
+      color: white;
+      flex: 1;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar h2 {
+      margin-top: 0;
+      color: var(--accent-dark);
+    }
+
+    .ticket-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 420px;
+      overflow: auto;
+      margin-bottom: 16px;
+      padding-right: 4px;
+    }
+
+    .ticket-item {
+      border: 1px solid var(--border);
+      background: #fffaf5;
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+
+    .ticket-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .ticket-item span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .totals {
+      border-top: 2px dashed var(--border);
+      padding-top: 14px;
+      margin-top: 10px;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    .grand-total {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: var(--success);
+    }
+
+    .sidebar-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .btn-clear {
+      background: #757575;
+      color: white;
+    }
+
+    .btn-new {
+      background: var(--gold);
+      color: #442700;
+    }
+
+    .empty-state {
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+      background: #fffdf9;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <main class="layout">
+      <section>
+        <h2 class="section-title">Menú</h2>
+        <div class="products-grid" id="productsGrid"></div>
+      </section>
+
+      <aside class="sidebar">
+        <h2>Venta actual</h2>
+        <div class="ticket-list" id="ticketList"></div>
+
+        <div class="totals">
+          <div class="total-row">
+            <span>Productos</span>
+            <strong id="itemsCount">0</strong>
+          </div>
+          <div class="total-row">
+            <span>Total</span>
+            <span class="grand-total" id="grandTotal">$0</span>
+          </div>
+        </div>
+
+        <div class="sidebar-actions">
+          <button class="btn-clear" id="clearLastBtn">Borrar último</button>
+          <button class="btn-new" id="newSaleBtn">Nueva venta</button>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const products = [
+      {
+        id: 1,
+        name: 'Coctel de Elote',
+        description: 'Grano de elote, crema de mantequilla y queso blanco.',
+        image: 'https://images.unsplash.com/photo-1603048297172-c92544798d5a?auto=format&fit=crop&w=900&q=80',
+        options: [
+          { label: 'Chico', price: 25 },
+          { label: 'Mediano', price: 40 },
+          { label: '1/2 Litro', price: 65 },
+          { label: '1 Litro', price: 130 }
+        ]
+      },
+      {
+        id: 2,
+        name: 'Elote Entero Sencillo',
+        description: 'Elote entero, crema de mantequilla y queso blanco.',
+        image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=900&q=80',
+        options: [{ label: 'Único', price: 35 }]
+      },
+      {
+        id: 3,
+        name: 'Elote Entero Flamin Hot',
+        description: 'Elote entero, crema de mantequilla y polvo de Cheetos Flamin Hot.',
+        image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80',
+        options: [{ label: 'Único', price: 60 }]
+      },
+      {
+        id: 4,
+        name: 'Volcano',
+        description: 'Vaso con grano de elote, queso amarillo, crema de mantequilla y Cheetos Flamin Hot.',
+        image: 'https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=900&q=80',
+        options: [{ label: 'Único', price: 75 }]
+      },
+      {
+        id: 5,
+        name: 'Elote El Montado',
+        description: 'Elote entero con crema, polvo Flamin Hot, Sabritas, grano de elote, queso blanco y amarillo.',
+        image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=900&q=80',
+        options: [{ label: 'Único', price: 80 }]
+      },
+      {
+        id: 6,
+        name: 'Charola Chorreada',
+        description: 'Coctel de elote al centro, Sabritas, grano de elote, crema de mantequilla, queso amarillo y blanco.',
+        image: 'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?auto=format&fit=crop&w=900&q=80',
+        options: [
+          { label: 'Chica', price: 80 },
+          { label: 'Mediana', price: 135 }
+        ]
+      },
+      {
+        id: 7,
+        name: 'Charola Los Compadres',
+        description: 'Coctel 1/2 litro al centro, Sabritas, elote Flamin Hot partido, grano de elote y quesos.',
+        image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=900&q=80',
+        options: [{ label: 'Único', price: 185 }]
+      },
+      {
+        id: 8,
+        name: 'Charola Suprema',
+        description: 'Coctel 1/2 litro al centro, Sabritas, 4 mitades de elotes Flamin Hot, grano de elote y quesos.',
+        image: 'https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?auto=format&fit=crop&w=900&q=80',
+        options: [{ label: 'Único', price: 200 }]
+      },
+      {
+        id: 9,
+        name: 'Maruchan Endiablada',
+        description: 'Charola grande con maruchan al centro, Sabritas, elote en grano, crema y quesos.',
+        image: 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?auto=format&fit=crop&w=900&q=80',
+        options: [{ label: 'Único', price: 120 }]
+      },
+      {
+        id: 10,
+        name: 'Tamaelote',
+        description: 'Tamal de elote, elote en grano y crema de mantequilla.',
+        image: 'https://images.unsplash.com/photo-1615870216519-2f9fa575fa5c?auto=format&fit=crop&w=900&q=80',
+        options: [{ label: 'Especialidad', price: 0 }]
+      }
+    ];
+
+    const productsGrid = document.getElementById('productsGrid');
+    const ticketList = document.getElementById('ticketList');
+    const itemsCount = document.getElementById('itemsCount');
+    const grandTotal = document.getElementById('grandTotal');
+    const clearLastBtn = document.getElementById('clearLastBtn');
+    const newSaleBtn = document.getElementById('newSaleBtn');
+
+    let saleItems = [];
+
+    function money(value) {
+      return `$${value.toFixed(2).replace('.00', '')}`;
+    }
+
+    function renderProducts() {
+      productsGrid.innerHTML = products.map(product => `
+        <article class="product-card">
+          <img src="${product.image}" alt="${product.name}">
+          <div class="product-body">
+            <h3>${product.name}</h3>
+            <p>${product.description}</p>
+            <div class="price-list">
+              ${product.options.map(option => `<span class="price-badge">${option.label}: ${money(option.price)}</span>`).join('')}
+            </div>
+            <div class="product-actions">
+              ${product.options.map(option => `
+                <button class="btn-add" onclick="addToSale('${escapeQuotes(product.name)}', '${escapeQuotes(option.label)}', ${option.price})">
+                  Agregar ${option.label}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function escapeQuotes(text) {
+      return text.replace(/'/g, "\\'");
+    }
+
+    window.addToSale = function(name, size, price) {
+      saleItems.push({ name, size, price });
+      renderTicket();
+    }
+
+    window.removeItem = function(index) {
+      saleItems.splice(index, 1);
+      renderTicket();
+    }
+
+    function renderTicket() {
+      if (saleItems.length === 0) {
+        ticketList.innerHTML = `<div class="empty-state">No hay productos agregados todavía.</div>`;
+      } else {
+        ticketList.innerHTML = saleItems.map((item, index) => `
+          <div class="ticket-item" style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+            <div>
+              <strong>${item.name}</strong>
+              <span>${item.size} - ${money(item.price)}</span>
+            </div>
+            <button onclick="removeItem(${index})" style="background:#c62828;color:white;border:none;border-radius:8px;padding:6px 10px;cursor:pointer;font-weight:bold;">Borrar</button>
+          </div>
+        `).join('');
+      }
+
+      const total = saleItems.reduce((sum, item) => sum + item.price, 0);
+      itemsCount.textContent = saleItems.length;
+      grandTotal.textContent = money(total);
+    }
+
+    clearLastBtn.addEventListener('click', () => {
+      saleItems.pop();
+      renderTicket();
+    });
+
+    newSaleBtn.addEventListener('click', () => {
+      saleItems = [];
+      renderTicket();
+    });
+
+    renderProducts();
+    renderTicket();
+  </script>
+</body>
+</html>
